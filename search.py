@@ -4,6 +4,7 @@ from move_generation import get_all_legal_moves
 from evaluate import evaluate_board
 
 def minimax(board_obj, depth, alpha, beta, maximizing_player):
+    """Minimax search with alpha-beta pruning."""
     if depth == 0:
         return evaluate_board(board_obj), None
 
@@ -19,11 +20,13 @@ def minimax(board_obj, depth, alpha, beta, maximizing_player):
         max_eval = -float('inf')
         for move in possible_moves:
             start, end = move
-            if not board_obj.move_piece(start, end):
-                continue
+
+            # Make the move
+            board_obj.move_piece(start, end)
 
             evaluation, _ = minimax(board_obj, depth - 1, alpha, beta, False)
 
+            # Undo the move
             board_obj.undo_move()
 
             if evaluation > max_eval:
@@ -32,7 +35,7 @@ def minimax(board_obj, depth, alpha, beta, maximizing_player):
 
             alpha = max(alpha, evaluation)
             if beta <= alpha:
-                break
+                break  # Beta cutoff
 
         return max_eval, best_move
 
@@ -40,11 +43,13 @@ def minimax(board_obj, depth, alpha, beta, maximizing_player):
         min_eval = float('inf')
         for move in possible_moves:
             start, end = move
-            if not board_obj.move_piece(start, end):
-                continue
+
+            # Make the move
+            board_obj.move_piece(start, end)
 
             evaluation, _ = minimax(board_obj, depth - 1, alpha, beta, True)
 
+            # Undo the move
             board_obj.undo_move()
 
             if evaluation < min_eval:
@@ -53,6 +58,6 @@ def minimax(board_obj, depth, alpha, beta, maximizing_player):
 
             beta = min(beta, evaluation)
             if beta <= alpha:
-                break
+                break  # Alpha cutoff
 
         return min_eval, best_move
